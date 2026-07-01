@@ -1,0 +1,112 @@
+% !TeX root = ../report.tex
+\documentclass[../report.tex]{subfiles}
+\begin{document}
+
+\section{比例-微分控制}
+在上一节得到，只要满足 $ 0 < K < 20.3 $，系统就可以满足超调量的要求。本节对系统进行比例-微分控制，进一步提高系统的性能指标。通过在系统中加入微分环节，可以改善系统的动态响应特性，减少超调量，提高系统的稳定性。
+
+第一部分，将评估原系统的调节时间是否满足要求；第二部分，将设计比例-微分控制器，并分析其对系统性能的影响，给出满足要求的设计方案。第三部分，将会进一步分析比例-微分控制器，给出其它类型的方案并更直观展示参数对性能影响。
+
+\subsection{原系统的评估}
+根据节\ref{sec:wxi}（页\pageref{sec:wxi}）中对根轨迹自然频率和阻尼比的分析，结合图\ref{fig:ques1_rlocus_K}(页\pageref{fig:ques1_rlocus_K})，
+可以得到原系统的调节时间 $T_s$ 与增益 $K$ 的关系。如果$K = 20.3$时候不满足调节时间要求，那么仅通过调节增益，原系统将难以同时满足所有要求。
+
+下面是原系统中 $K = 20.3$ 时的系统响应曲线，如图\ref{fig:ques2_sys_response}所示。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2/oriTime.png}
+    \caption{原系统响应曲线}
+    \label{fig:ques2_sys_response}
+\end{figure}
+可以看到$t=1s$时，系统的输出大于 1.02，因此原系统在 $K = 20.3$ 时不满足调节时间要求，进而有原系统不满足要求，需要添加比例微分控制器。
+
+\subsection{比例-微分控制器设计}
+添加比例-微分控制器，相当于对系统引入一个闭环零点，可以加快系统响应速度并降低超调量。
+如果在原系统增益最大值情况下使用比例-微分控制，不妨先观察关于控制系数$Td$的等效根轨迹图(如图\ref{fig:eqroot})。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2/eqroot.png}
+    \caption{等效根轨迹图}
+    \label{fig:eqroot}
+\end{figure}
+由图可得，存在最佳阻尼比$\xi=0.707$的点，此时$Td=0.0488$。这组参数下的响应曲线和相关参数如图\ref{fig:td0488}。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2/td0488.png}
+    \caption{Td=0.488 时域响应图}
+    \label{fig:td0488}
+\end{figure}
+此时，系统仍然不满足调节时间的要求。此时控制器的控制系数$Td$数值过小，而且系统增益不大，控制效果较弱。不妨增大$Td$到
+$Td=0.1$（图\ref{fig:td1}）
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2/td1.png}
+    \caption{Td=0.1 时域响应图}
+    \label{fig:td1}
+\end{figure}
+此时，系统满足要求。
+
+\subsection{进一步分析}
+
+由于比例-微分控制器也可以降低超调量，所以可以在更宽的参数范围下调节系统，不必再遵守$ 0<K<20.3$的约束。
+引入比例-微分控制相当于对系统引入一个开环零点。根据此零点相对于原系统的开环零极点的位置关系，可以对$Td$不同取值下的
+概略根轨迹做分析。原系统有开环极点 s = -18.3, s = -5.68, s = 0 和开环零点 s = -20。那么根据可以根据分段点0.176， 0.0546， 0.05对$Td$的选取
+分类讨论。选取数值，对应于每一个分段区间，绘制关于增益$K$的根轨迹如下图(\ref{fig:rootK})。
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./ques2/root04.png}
+        \caption{Td=0.04}
+        \label{fig:root04}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./ques2/root06.png}
+        \caption{Td=0.06}
+        \label{fig:root06}
+    \end{subfigure}
+        \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./ques2/root1.png}
+        \caption{Td=0.1}
+        \label{fig:root1}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./ques2/root2.png}
+        \caption{Td=0.2}
+        \label{fig:root2}
+    \end{subfigure}
+    \caption{不同Td选择下增益K的根轨迹图}
+    \label{fig:rootK}
+\end{figure}
+
+可以看到，除了 $Td>0.176$的情况下，主极点是一个负实数，其它三种情况都可以选择合适数值使得主极点是一对共轭极点，使得系统达到最佳阻尼比。
+其中一组参数选择是$K=31.4,Td=0.08$,得到的结果如图\ref{fig:td08}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2/td08.png}
+    \caption{时域响应图}
+    \label{fig:td08}
+\end{figure}
+如果对超调量提出更多要求，也就是（近似）零超调,那么可以选择$Td>0.176$。比如$K=31.4, Td=0.2$，如图\ref{fig:td2}。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2/td2.png}
+    \caption{时域响应图}
+    \label{fig:td2}
+\end{figure}
+
+是否存在一个最优的性能点呢？通过参数网格法对$K$,$Td$进行划分，响应参数下的调节时间和超调量，并取绘制为热力图如图\ref{fig:heat}。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{./ques2/heat.png}
+    \caption{超调量和调节时间热力图}
+    \label{fig:heat}
+\end{figure}
+可以看到，增大增益$K$，可以使得系统调节时间明显缩短，但是超调量却迅速增加，但是超调量的增加却可以被迅速$Td$的增大遏制，当$Td>0.08$以后
+超调量就主要取决于$Td$。图中的最优参数点是指在满足超调量要求下调节时间最短的点。最优参数点位于图中边界上，结合图像区域可以判断，事实上仅仅
+依靠超调量和调节时间两个指标，不存在最优性能点，只要$K$足够大，选择合适的$Td$，性能可以任意接近理想状态（零超调，零调节时间）。
+
+\end{document}

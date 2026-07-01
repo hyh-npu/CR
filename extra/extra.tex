@@ -1,0 +1,119 @@
+% !TeX root = ../report.tex
+\documentclass[../report.tex]{subfiles}
+\begin{document}
+\section{过程中的其它尝试和反思}
+
+本节在前两节已经完成课程设计题目要求后，展示在前两节解决问题过程中的其它尝试和思考。由于对控制系统的理解较为浅显且多有谬误，所掌握
+的知识不足，以及在撰写此报告的时处于考试周，时间不足够充分，这部分没有产生实质性的结果，仅作记录。
+
+在解决第二节的问题（对应课程设计问题第五问）时，发现满足要求的参数$Td$和$K$的范围很大且性能仍然有明显的差别，
+自然地，我希望能够找到一个最优的或者近似为最优的解，也就是用一个参数 $I=I(Td,K)$ 定义系统性能，然后解出
+\begin{equation}
+   Td, K =  \mathop{\arg\max}\limits_{Td,K} I \label{eq:ques}
+\end{equation}
+为了同时方便数学求解和贴近原始要求（尽可能低的超调量和尽可能小的调节时间），可以把系统响应和输入看作是定义在$[0,\infty)$上的函数向量空间
+$\mathbb{V} $中的向量，用其 2-范数 表示系统性能，也就是：
+\begin{equation}
+    I = \sqrt{\int_{0}^{\infty} (c(t)-1)^2 dt}
+\end{equation}
+对于问题\ref{eq:ques}来说，取其平方是同样的，且更好计算，即
+\begin{equation}
+    I = \int_{0}^{\infty} (c(t)-1)^2 dt \label{eq:ex_int}
+\end{equation}
+在此处，把$I$和$c(t)$都看作是两个待求参数的函数， 那么需要求解
+\begin{align}
+   Td, K &=  \mathop{\arg\max}\limits_{Td,K} I(Td,K) \\&= \mathop{\arg\max}\limits_{Td,K}\int_{0}^{\infty} (c(Td, K, t)-1)^2 dt
+\end{align}
+假设这个函数在极值附近区域内是光滑的（事实上，这个区域不存在），那么只要求
+\begin{equation}
+    \begin{cases}
+        \frac{\partial I}{\partial Td} &= \int_{0}^{\infty} 2(c-1) \frac{\partial c}{\partial Td} dt =0\\
+        \frac{\partial I}{\partial K} &= \int_{0}^{\infty} 2(c-1) \frac{\partial c}{\partial K} dt =0
+    \end{cases}
+\end{equation}
+下面的分析中可以略去这个常数2。
+
+实际上，现在已经可以直接求此问题的数值解了，但是处理积分的时间复杂度比较高，可以进一步化简此方程。以下用
+$q_i( i=1,2)$表示两个参数，$q_1 = Td, q_2 = K$。利用拉普拉斯变换性质，并且假设极值点附近逆变换积分一致收敛，
+复域函数极点稳定，从而求导和拉普拉斯变换可交换，就有：
+\begin{align}
+    0 = \frac{\partial I}{\partial q_i} &=\int_{0}^{\infty} (\mathcal{L} ^{-1}[\Psi ] -1)\frac{\partial}{\partial q_i} \mathcal{L} ^{-1}[\Psi ] dt\\
+    &=\int_{0}^{\infty}(\mathcal{L} ^{-1}[\Psi - \frac{1}{s}])\mathcal{L} ^{-1}[\frac{\partial\Psi}{\partial q_i}] dt\\
+    &=\int_{0}^{\infty}\mathcal{L} ^{-1}[(\Psi - \frac{1}{s})\bigotimes \frac{\partial\Psi}{\partial q_i}] dt\\
+    &=\lim_{t \to \infty}  \mathcal{L} ^{-1}[\frac{1}{s}((\Psi - \frac{1}{s})\bigotimes \frac{\partial\Psi}{\partial q_i})]\\
+    &=\lim_{s \to 0}  (\Psi - \frac{1}{s})\bigotimes \frac{\partial\Psi}{\partial q_i} \label{eq:ex_rst}
+\end{align}
+其中，$\mathcal{L}[\Psi(s)](t) =c(t) $, 表示系统阶跃响应, $\bigotimes$表示复卷积。
+
+对于简单的系统来说，这种方法可以直接手工计算。拿标准二阶系统举例，其单位阶跃响应是：
+\begin{equation}
+    C(s) = \frac{1}{s(s^2+2\xi s + 1)}
+\end{equation}
+代入（\ref{eq:ex_rst}）得到
+\begin{equation}
+    0 = \frac{4 \xi^2 -1}{8\xi^2}
+\end{equation}
+那么最优解就是 $\xi=\frac{1}{2}$。
+
+但对于一个稍微复杂一些的系统，比如课程设计题目中涉及的系统，需要借助数值计算的得到结果（以下$Td$简写为$T$,
+偏导数$\frac{\partial I}{\partial q_i}$用角标$I_{q_i}$表示）：
+% I_K：对增益K的灵敏度积分
+\[
+0=I_K = -\frac{
+\begin{split}
+&1347798027264 K^4 T^4 + 360476069584 K^4 T^3 - 13104894520 K^4 T^2 \\
+&-\, 4767685435 K^4 T - 88536320 K^4 + 78733521872512 K^3 T^3 \\
+&+\, 15311985071584 K^3 T^2 - 1322366080400 K^3 T - 110493327360 K^3 \\
+&+\, 1486716021834368 K^2 T^2 + 162646299286400 K^2 T - 23008640904160 K^2 \\
+&+\, 9838682967939072 K T + 67388239506432 K + 21025130726006784
+\end{split}
+}{20 K \left(20 K^2 T^2 + K^2 T + 584 K T + 4 K + 2496\right)^2}
+\]
+
+% I_T：对微分时间T的灵敏度积分
+\[
+0=I_T = \frac{
+\begin{split}
+&239402209280 K^4 T^4 + 23940220928 K^4 T^3 - 6978143232 K^4 T^2 \\ 
+&-\, 885363200 K^4 T - 22134080 K^4 + 13981089021952 K^3 T^3 \\
+&+\, 569119067952 K^3 T^2 - 382169837256 K^3 T - 21084920005 K^3 \\
+&+\, 263867632616640 K^2 T^2 - 5052232390848 K^2 T - 4920208706832 K^2 \\
+&+\, 1744309100012544 K T - 118101576748032 K + 3722329266499584
+\end{split}
+}{20 \left(20 K^2 T^2 + K^2 T + 584 K T + 4 K + 2496\right)^2}
+\]
+
+解出
+\begin{align}\label{numrst}
+   K &= []\\ 
+    T &= [] \notag
+\end{align}
+这表示数值计算没有得到解,故而可以认为在有限实数的范围内没有解。
+
+但这并不代表结果没有意义，如果把$I_K=0$看成是$K = K(T)$的隐式形式，就得到固定$T$时的最优K值；
+同理，把$I_T =0 $看成是$T = T(K)$的隐式形式，就得到固定$K$时的最优T值，函数图形如图\ref{fig:func}。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./extra/func.png}
+    \caption{隐函数图像}
+    \label{fig:func}
+\end{figure}
+把两个函数放在同一个坐标下，如图\ref{fig:func2}，就可以看出为什么会得到式（\ref{numrst}）的结果了。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{./extra/func2.png}
+    \caption{同坐标隐函数图像}
+    \label{fig:func2}
+\end{figure}
+观察两函数各自图像\ref{fig:func}可以看到，当固定T时，最优K值增长十分迅速；固定K时，最优T值却增长缓慢，在$K$较大时，基本平坦。这和
+在第二节得到的结论一致，即使增益K很大，也可以通过微分系数比较小的比例-微分控制器实现很好的控制效果。
+
+同时观察图\ref{fig:func2}，两条曲线可能在负值处有交点，但这不是我们关注的区域。在正值区域，两条曲线基本平行，没有交点，
+说明式（\ref{numrst}）的结果合理。同时根据引入无穷远点（理想点）的欧式平面的性质，平行线交于无穷原点，可以认为，$K,T$在趋近于无穷大时，
+系统趋近理想性能（式（\ref{eq:ex_int}）中，$I=0$）。
+
+当然，即使不考虑现实器件的约束，系统可以实现任意大的增益，也会由于抗噪，鲁棒性的要求而不能采用。因而仅仅通过一两个理论上的参数，
+是没有办法确定最优的系统的。想要更优地实现控制系统，需要对控制理论有更深入地了解，通过更多指标和更多理论知识标定和寻找一个真实
+可用的“最优”系统。
+
+\end{document}

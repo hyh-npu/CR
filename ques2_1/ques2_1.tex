@@ -1,0 +1,81 @@
+% !TeX root = ../report.tex
+\documentclass[../report.tex]{subfiles}
+\begin{document}
+
+\section{原系统的频域和时域分析}
+本节第一部分通过稳态误差确定增益$K$，第二部分分析原系统的时域和频域性能。
+
+\subsection{增益$K$的确定}
+使用静态误差系数法计算稳态误差。由传递函数，确定此系统是 $I$型系统，
+化为尾一形式，
+\begin{equation}
+    G_0(s) = \frac{2K}{s(\frac{s}{2}+2)}
+\end{equation}
+从而有 $K_v = 2K$。由题意，$A_v = 1$，那么
+\begin{equation}
+    e_{ss}(\infty) = \frac{A_v}{K_v} = \frac{1}{2K} = 0.05
+\end{equation}
+解得
+\[
+K = 10
+\]
+
+\subsection{系统时域和频域性能}
+\subsubsection{时域：}
+通过MATLAB容易得到原系统时域阶跃响应如图\ref{fig:ques21_timeori}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_1/time_ori.png}
+    \caption{原系统响应曲线}
+    \label{fig:ques21_timeori}
+\end{figure}
+可以得到，系统超调量$\sigma\% = 58\%$,调节时间$t_s = 3.6s$,峰值时间$t_p = 0.46s$。
+
+
+
+\subsubsection{频域：}
+
+
+设单位负反馈系统的开环传递函数为 $G(s)$，令 $s=j\omega$ 得到开环频率特性：
+\begin{equation}
+G(j\omega) = \big|G(j\omega)\big| \cdot e^{j\angle G(j\omega)}
+\end{equation}
+其中 $\big|G(j\omega)\big|$ 为幅频特性，$\angle G(j\omega)$ 为相频特性。
+
+相位裕度（Phase Margin, PM）表征系统的相角储备，定义为开环幅频特性衰减至1（0dB）时，相角距 $-180^\circ$ 的差值。计算时先求解幅值穿越频率（截止频率）$\omega_c$，满足幅值条件
+\begin{equation}
+\big| G(j\omega_c) \big| = 1
+\end{equation}
+再将 $\omega_c$ 代入相频特性，按下式计算相位裕度
+\begin{equation}
+\text{PM} = 180^\circ + \angle G(j\omega_c)
+\end{equation}
+其物理意义为：$\text{PM} > 0$ 对应系统稳定；工程上通常取 $30^\circ \sim 60^\circ$ 以兼顾平稳性与快速性。
+
+幅值裕度（Gain Margin, GM）表征系统的增益储备，定义为开环相频特性达到 $-180^\circ$ 时，开环幅值的倒数。计算时先求解相位穿越频率（相角交界频率）$\omega_g$，满足相角条件
+\begin{equation}
+\angle G(j\omega_g) = -180^\circ
+\end{equation}
+再将 $\omega_g$ 代入幅频特性，线性形式的幅值裕度为
+\begin{equation}
+\text{GM} = \frac{1}{\big| G(j\omega_g) \big|}
+\end{equation}
+工程上常用分贝形式表示
+\begin{equation}
+\text{GM (dB)} = -20\lg\big| G(j\omega_g) \big|
+\end{equation}
+其物理意义为：$\text{GM (dB)} > 0$ 对应系统稳定；工程上通常要求大于 6dB 以保证足够的增益鲁棒性。
+
+对于最小相位系统，$\text{PM}>0$ 且 $\text{GM}>0\ \text{dB}$ 是闭环系统稳定的充要条件。
+
+使用MATLAB绘制其幅频，相频曲线，得到图\ref{fig:mp}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_1/mp.png}
+    \caption{幅频曲线和相频曲线}
+    \label{fig:mp}
+\end{figure}
+利用图像，结合上面的定义，得到其相位裕度$PM=17.96^\circ$，幅值裕度$GM=\infty$。
+显然，此系统相位裕度不足，但是幅值裕度充足。
+
+\end{document}

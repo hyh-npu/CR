@@ -1,0 +1,289 @@
+% !TEX root = ./report.tex
+\documentclass[a4paper]{ctexbook}
+\usepackage{ctex}
+\usepackage{subfiles}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry} 
+\usepackage{graphicx}   
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\lstset{inputencoding=utf8, extendedchars=true}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{caption}
+\usepackage{multirow} 
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{textpos} 
+\usepackage{matlab-prettifier}
+\usepackage{minted}
+
+\makeatletter
+\def\addcontentsline#1#2#3{%
+  \protected@write\@auxout{}%
+    {\string\@writefile{#1}{\string\contentsline{#2}{#3}{\thepage}}}%
+}
+\makeatother
+
+% ========== 调整section编号（无chapter前缀） ==========
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+
+% ========== 原有配置保留 ==========
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+
+\captionsetup[figure]{
+    labelformat=simple,
+    labelsep=period
+}
+\captionsetup[table]{
+    labelformat=simple,
+    labelsep=period
+}
+
+% ========== 页眉配置 ==========
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\quad#1}{}}
+\fancyhead[R]{\bfseries\rightmark}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancypagestyle{plain}{%
+    \fancyhf{}%
+    \fancyfoot[C]{\thepage}%
+    \renewcommand{\headrulewidth}{0pt}%
+}
+
+% ========== hyperref ==========
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    anchorcolor=blue,
+    citecolor=blue,
+    urlcolor=blue,
+    pdftitle={自动控制原理课程设计报告}, 
+    pdfauthor={韩耀辉}
+}
+
+\title{自动控制原理课程设计报告}
+\author{韩耀辉 2024302022}
+\date{\today}
+
+\begin{document}
+\frontmatter
+% ========== 左上角logo ==========
+\begin{titlepage}
+    \pagestyle{empty} % 隐藏封面页码
+    \centering
+    \setstretch{1.2} % 全局行距
+
+    % 左上角logo
+    \begin{textblock*}{8cm}(0cm,0cm) 
+        \includegraphics[width=6cm]{logo.png} 
+    \end{textblock*}
+
+    \vspace*{0.1\textheight}
+
+    {\fontsize{16}{20}\kaishu 电子信息学院实验课程报告}
+    \vspace{0.05\textheight}
+
+    {\fontsize{36}{42}\heiti \textbf{自动控制原理课程设计报告}}
+    \vspace{0.03\textheight}
+
+    \rule{0.5\textwidth}{1pt}
+    \vspace{0.12\textheight}
+
+    {\fontsize{12}{20}\selectfont
+    \begin{tabular}{|l@{\hspace{1em}:\hspace{1em}}r|}
+        \hline
+        \textbf{姓名} & 韩耀辉 \\
+        \hline
+        \textbf{学号} & 2024302022 \\
+        \hline
+        \textbf{班级} & U08M11070.01 \\
+        \hline
+        \textbf{学院} & 电子信息学院 \\
+        \hline
+    \end{tabular}
+    }
+    \vspace{0.12\textheight}
+
+    % 底部日期（楷体，适中字号）
+    {\fontsize{14}{18}\kaishu 提交日期：\today}
+    \vspace{0.05\textheight}
+
+    % 底部装饰线（与标题线呼应）
+    \rule{0.3\textwidth}{0.8pt}
+
+    % 底部空行（压底）
+    \vfill
+\end{titlepage}
+
+% ========== 目录生成：先清空旧目录，再生成 ==========
+\newpage
+\clearpage % 强制换页，避免目录写入冲突
+\tableofcontents
+\clearpage % 强制换页，闭合目录写入
+\chapter{前言}
+本报告为西北工业大学电子信息学院《自动控制原理》课程设计成果，围绕两个核心课题展开，分别对应于课程设计的两道大题。报告采用经典控制理论的分析方法，结合 MATLAB 仿真工具，完成了从系统建模、性能分析到校正设计的全过程。
+
+第一章针对**空间站方位控制系统**展开根轨迹分析与优化设计。该章共分为三节：
+\begin{itemize}
+    \item 第一节“原系统根轨迹”对应题目第(1)-(4)小问，完成了根轨迹绘制与关键点标注、系统稳定性判定、阻尼比与自然频率的几何意义阐释，并根据超调量指标确定了合适的开环增益范围。
+    \item 第二节“比例-微分控制”对应题目第(5)小问，评估了原系统的调节时间性能，设计了比例-微分（PD）控制器，并通过参数调整使系统满足了动态性能指标要求。
+    \item 第三节“过程中的其它尝试和反思”记录了在设计过程中对最优控制器参数求解的数学探索与思考，展示了控制理论学习的深入过程。
+\end{itemize}
+
+第二章针对**角度跟踪系统**展开串联校正网络的设计与性能对比。该章共分为两节：
+\begin{itemize}
+    \item 第一节“原系统的频域和时域分析”对应题目要求(1)-(2)，通过稳态误差分析确定了系统增益，并从时域和频域两个维度全面评估了原系统的性能。
+    \item 第二节“串联校正装置的设置和性能分析”对应题目要求(3)-(5)，分别完成了串联超前、滞后-超前、串联滞后三种校正装置的设计与仿真验证，通过对比分析总结了不同校正网络的特点与适用范围。
+\end{itemize}
+
+附录部分提供了支撑本报告的完整 MATLAB 源代码，包括根轨迹自动标注、性能热力图绘制、频域特性分析及各类校正装置的仿真脚本。
+
+由于本报告有大量彩色图片，可运行代码，含有超链接的文本（蓝色字体），推荐阅读电子版，可通过以下 GitHub 仓库获取：\\
+\url{https://github.com/hyh-npu/autoControlTheory}
+
+本报告中的所有理论分析、方案设计与结果解读均由本人独立完成，AI 工具仅作为编程辅助手段使用，具体说明见文末《说明和致谢》。由于作者水平有限，报告中难免存在疏漏之处，恳请老师批评指正。
+
+\mainmatter
+% ========== 课程报告（无编号+安全的目录项） ==========
+\chapter{通过根轨迹分析优化控制系统}
+
+
+某空间站的方位控制系统可以由单位反馈系统来表征，其开环传递函数为
+\[
+G(s) = \frac{K^*(s+20)}{s(s^2+24s+104)}
+\]
+
+其中 $K^*$ 为系统增益，需通过根轨迹分析确定合适的 $K^*$ 值，并通过增加控制器使闭环系统满足性能指标。
+
+\begin{enumerate}
+    \item[(1)] 使用 MATLAB 绘制系统的根轨迹图，标出关键点（分离点、渐近线、虚轴交点等）。
+    \item[(2)] 根据所绘制的根轨迹图，确定使系统稳定的 $K$ 值范围。
+    \item[(3)] 根据所绘制的根轨迹图，分析阻尼比 $\zeta$ 和自然频率 $\omega_n$ 在根轨迹上的几何意义。
+    \item[(4)] 利用所绘制的根轨迹图选择 $K$ 值，使得闭环系统的超调量 $\sigma\% \leq 10\%$。
+    \item[(5)] 此时，调节时间是否满足 $t_s \leq 1\,\mathrm{s}$（按 $2\%$ 准则），若不满足，在此基础上，给系统添加一个比例微分控制器，分析添加比例微分控制器前后系统的阶跃响应，能得到什么结论？
+\end{enumerate}
+
+本章第一节回答前四问，第二节回答第五问                               。
+
+\newpage
+\subfile{ques1/ques1.tex}
+\newpage
+\subfile{ques2/ques2.tex}
+\newpage
+\subfile{extra/extra.tex}
+\newpage
+\chapter{线性系统的校正方法}
+% \addcontentsline{toc}{chapter}{线性系统的校正方法} % 简化目录项，无特殊字符
+
+
+% 题目内容：基于串联校正的角度跟踪控制系统设计
+
+某角度跟踪系统为单位反馈控制系统，其开环传递函数为：
+\[
+G_0(s) = \frac{4K}{s(s+2)}
+\]
+
+试分别设计两个串联校正装置，使用相位超前控制器、相位迟后控制器或超前-迟后控制器，使校正后系统满足下列性能指标：
+
+\begin{enumerate}
+    \item[(1)] 在单位斜坡函数输入下的稳态误差 $e_{ss}(\infty) = 0.05$；
+    \item[(2)] 相位裕度 $\gamma \geq 45^\circ$；
+    \item[(3)] 幅值裕度 $h(\mathrm{dB}) \geq 10\,\mathrm{dB}$。
+\end{enumerate}
+
+\vspace{1em}
+
+\noindent\textbf{设计要求}
+
+\begin{enumerate}
+    \item[(1)] 根据稳态误差要求，确定原系统的增益值 $K$；
+    \item[(2)] 使用 Matlab 编程绘制校正前系统的伯德图、单位阶跃响应曲线，并从图中得出原系统的频域及时域性能指标；
+    \item[(3)] 设计串联校正装置，使用 Matlab 编程绘制校正后系统的伯德图、单位阶跃响应曲线，并从图中得出校正后系统的频域及时域性能指标；
+    \item[(4)] 对校正前后系统的性能进行比较，检验所设计校正装置是否能使系统性能指标达到要求；
+    \item[(5)] 比较你所设计的两个校正装置，分析它们的优劣，并简单总结不同校正网络的特点及使用范围。
+\end{enumerate}
+ 
+本章第一节回答前两问，第二节回答后三问。
+
+\newpage
+\subfile{ques2_1/ques2_1.tex}
+\newpage
+\subfile{ques2_2/ques2_2.tex}
+\newpage
+
+\appendix
+\chapter{MATLAB代码}
+\newpage
+\section{课题一代码}
+\subsubsection{根轨迹和阶跃响应绘制}
+\lstinputlisting[
+  style=Matlab-editor,   % ← 这里！包名≠style名
+  language=Matlab,
+  breaklines=true,
+  basicstyle=\ttfamily\small
+]{task1.m}
+\subsubsection{阻尼比和自然频率意义示例}
+\lstinputlisting[
+  style=Matlab-editor,   % ← 这里！包名≠style名
+  language=Matlab,
+  breaklines=true,
+  basicstyle=\ttfamily\small
+]{untitled.m}
+\subsubsection{热力图绘制}
+\lstinputlisting[
+  style=Matlab-editor,   % ← 这里！包名≠style名
+  language=Matlab,
+  breaklines=true,
+  basicstyle=\ttfamily\small
+]{untitled2.m}
+\subsubsection{第三节方程求解和函数绘制}
+\lstinputlisting[
+  style=Matlab-editor,   % ← 这里！包名≠style名
+  language=Matlab,
+  breaklines=true,
+  basicstyle=\ttfamily\small
+]{untitled4.m}
+\section{课题二代码}
+\lstinputlisting[
+  style=Matlab-editor,   % ← 这里！包名≠style名
+  language=Matlab,
+  breaklines=true,
+  basicstyle=\ttfamily\small
+]{task2.m}
+% ========== 强制闭合所有写入流 ==========
+\backmatter
+\chapter{其它说明}
+
+本报告为西北工业大学电子信息学院《自动控制原理》课程设计成果，围绕两个核心课题展开：一是基于根轨迹法的空间站方位控制系统分析与 PD 校正设计，二是角度跟踪系统的串联校正网络设计与性能对比。
+
+整个实验过程严格遵循经典控制理论的分析范式：首先从系统数学模型出发，通过根轨迹、频域伯德图等工具完成原系统性能评估；其次结合超调量、调节时间、稳态误差等性能指标要求，推导校正网络的结构与参数；最后通过 MATLAB 仿真验证设计方案的有效性，并完成校正前后系统的性能对比与总结。
+
+在根轨迹分析部分，除使用 MATLAB 内置 rlocus 函数绘制基础根轨迹外，还编写了自动化标注脚本，实现了渐近线、分离点、虚轴交点等关键特征的可视化解析；在 PD 控制器参数寻优过程中，采用参数网格法绘制性能指标热力图，直观展示了增益 $K$ 与微分时间常数 $T_d$ 对系统动态性能的耦合影响。在第二章校正装置设计中，分别完成了串联超前、滞后-超前、串联滞后三种校正方案的理论推导与仿真验证，并从频域与时域两个维度完成了方案对比分析。
+
+本报告中的 MATLAB 代码编写与调试过程使用了 AI 辅助编程工具，主要用于以下场景：
+1. 代码框架生成与补全：针对根轨迹自动标注、热力图绘制、频域特性可视化等模块化功能，AI 提供了初始代码框架与函数调用参考；
+2. 算法逻辑优化：在 PD 控制器最优参数求解、隐函数数值计算等复杂环节，AI 协助完成了符号运算推导与数值解法验证；
+3. 代码调试与错误处理：针对 MATLAB 运行过程中的维度不匹配、函数句柄定义等问题，AI 提供了调试思路与修正建议。
+4. 报告中\LaTeX 宏包冲突排查，语法检查和报错修正。
+
+需要特别说明的是：AI 仅作为编程辅助工具使用，所有控制理论分析、校正方案设计、参数选择与结果解读均由本人独立完成。报告中涉及的系统建模、性能指标计算、校正原理阐述等内容均基于课程所学知识，AI 未参与理论推导与结论形成过程。
+
+本课程的顺利完成，离不开老师的悉心指导与同学们的的热心帮助，在此谨向所有给予支持的人表示诚挚的感谢。
+
+衷心感谢课程老师在课堂教学与课程设计指导中的耐心讲解与专业指点。老师对根轨迹法、系统校正等核心知识点的深入阐释，以及对实验报告撰写规范的严格要求，为我完成本次课程设计奠定了坚实的理论基础。感谢各类开源工具与学习资源为本次实验提供的技术支持，同时也感谢老师在百忙之中审阅本报告。
+
+由于本人理论水平与实践经验有限，报告中难免存在疏漏与不足之处，恳请老师的批评指正。
+\clearpage
+\end{document}

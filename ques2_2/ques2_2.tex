@@ -1,0 +1,277 @@
+% !TeX root = ../report.tex
+\documentclass[../report.tex]{subfiles}
+\begin{document}
+
+\section{串联校正装置的设置和性能分析}
+本节第一部分进行串联超前校正装置的设计和分析，第二部分进行迟后，超前校正
+装置的设计和分析，第三部分进行串联迟后校正装置的设计和分析。
+
+\subsection{串联超前校正装置的设计和分析}
+串联超前校正有如下形式：
+\begin{equation}
+    G_c(s) = \frac{aTs+1}{Ts+1}
+\end{equation}
+
+串联超前校正装置的特点是相角超前，幅值增加，适用于相位裕度和幅值裕度都不足
+的系统。此系统相位裕度不足，故而可以使用超前校正。
+首先确定需要超前的相角$\phi_m$:
+\[
+\begin{split}
+    \phi_m &= \gamma^*-\gamma_0 +(5\sim 10)^\circ \\
+    &= 45^\circ - 17.96^\circ + 7^\circ = 34.04^\circ
+\end{split}
+\]
+$\phi_m< 60^\circ$,可以使用超前校正。继续求解得到
+\[
+    a = \frac{1+\sin \phi_m}{1 - \sin \phi_m} = 3.543
+\]
+校正装置的两个转折点的中点对应校正后系统的截止频率$\omega_c$
+,由于校正后系统在此处增益为$10\lg a = 5.49$，所以需要找到
+原系统幅频为$|G(jw) = -5.49|$的点，也就是$\omega_c = 8.75$
+那么，两个转折点$\omega_C = \frac{1}{aT}$和$\omega_D = \frac{1}{T}$
+的中点$\omega_D$有：
+\[
+    \omega_c = \sqrt{\omega_C \omega_D} = \frac{1}{\sqrt{aT^2}}=8.75
+\]
+得到，$T = 0.0861$
+于是，校正装置就被确定为：
+\[
+    G_c(s) = \frac{\frac{s}{3.278}+1}{\frac{s}{11.6144}+1}
+\]
+经过计算，此时系统的相角裕度是$GM = 43.14^\circ$。
+性能已经接近指标，不妨向右移动第二个转折点，增大校正幅度。
+校正装置为：
+\[
+    G_c(s) = \frac{\frac{s}{3.278}+1}{\frac{s}{13.6144}+1}
+\]
+此时系统的相角裕度是$GM = 46.64^\circ$。
+校正系统的伯德图如图\ref{fig:for}，校正后系统的伯德图如图\ref{fig:for_sys}
+，阶跃响应是\ref{fig:for_time}。此时，系统幅值裕度依然是无穷，时域上
+调节时间减少，而且超调量大幅降低。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/for.png}
+    \caption{校正系统伯德图}
+    \label{fig:for}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/for_sys.png}
+    \caption{校正后系统伯德图}
+    \label{fig:for_sys}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/for_time.png}
+    \caption{校正后系统阶跃响应}
+    \label{fig:for_time}
+\end{figure}
+
+\subsection{串联迟后-超前校正的设计和分析}
+
+串联迟后-超前校正具有形式：
+\begin{equation}
+    G_c(s) = \frac{T_a s +1}{aT_a s +1}\frac{T_b s +1}{\frac{T_b}{a}s +1}
+\end{equation}
+
+串联迟后-超前校正的特点是幅值衰减，相角超前，综合利用了迟后网络和超前
+网络的特性，提高系统性能。
+
+同样地，先确定$\phi_m$:
+\[
+    \begin{split}
+          \phi_m &= \gamma^* -\gamma_0(\omega_c^*)+6^\circ \\ 
+          &= 45^\circ -17.96^\circ +6^\circ = 33.04^\circ
+    \end{split}
+\]
+那么
+\[
+    a = \frac{1+\sin \phi_m}{1-\sin \phi_m} = 3.3978
+\]
+类似于超前校正中确定转折点的方法，可以得到$|G(j\omega)| = 10 \lg a = 5.312$
+处就是$\omega_C$和$\omega_D$的中点，即$\omega = 4.46323$，于是
+\[
+    \begin{cases}
+    \omega_c = \sqrt{\omega_C \omega_D} = \frac{1}{\sqrt{aT^2}}=4.46323\\
+    \omega_c = \frac{1}{aT}
+    \omega_d = \frac{1}{T}
+    \end{cases}
+\]
+其中$T = \frac{T_b}{a}$，解得，$\omega_C = 2.4231$，$\omega_D = 8.2271$。
+又由于$\omega_E$和$\omega_c$相距十倍频程，
+\[
+    \begin{cases}
+    \omega_E &= 0.1\omega_c\\
+    \omega_F &= \frac{\omega_E}{a}
+    \end{cases}
+\]
+解得
+$\omega_a = 0.131356$， $\omega_b = 0.446323$
+
+该系统表达式
+\[
+    G_c(s) =\frac{\frac{s}{0.446323}+1}{\frac{s}{0.131356}+1}\frac{\frac{s}{2.4231}+1}{\frac{s}{8.2271}+1}
+\]
+校正系统的伯德图如图\ref{fig:bf}，校正后系统的伯德图如图\ref{fig:bf_sys}
+，阶跃响应是\ref{fig:bf_time}。此时，系统相角裕度是$53.17^\circ$，幅值裕度依然是无穷，时域上
+调节时间减少，而且超调量大幅降低。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/bf.png}
+    \caption{校正系统伯德图}
+    \label{fig:bf}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/bf_sys.png}
+    \caption{校正后系统伯德图}
+    \label{fig:bf_sys}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/bf_time.png}
+    \caption{校正后系统阶跃响应}
+    \label{fig:bf_time}
+\end{figure}
+
+\subsection{串联迟后校正系统的设计和分析}
+串联迟后系统具有形式：
+\begin{equation}
+    \frac{bTs+1}{Ts +1}
+\end{equation}
+串联迟后校正具有相角迟后，幅值衰减的特性，能够挖掘系统的相角储备，适合相角条件有余裕，但幅值条件不足的情况。
+原系统中不满足相角条件要求，但是幅值裕度却满足，并不适配于串联迟后校正。但是如果只是满足系统的幅值，相角裕度
+的条件，那么串联迟后校正也是可以使用的。
+
+一般情况下，串联迟后校正的作用是在$\omega_g$上以小幅迟后相角的代价降低幅值，从而减少幅值裕度。但使用此方法
+显然不适用于该情况，因为这势必会进一步降低相角裕度。但是观察原系统，原系统的幅相曲线比较有规律，是一条单调下降曲线，
+可以考虑利用迟后校正幅值衰减的特点，移动系统的$\omega_c$，从而使系统满足设计要求。
+
+详细步骤如下：
+首先选定系统的新截止频率$\omega_c$,
+新截止频率需要满足：
+\[
+45^\circ + 6^\circ = 180^\circ + \angle G(j\omega_c) 
+\]
+加上$6^\circ$的原因是迟后校正系统第二个转折点十倍频程后会引入一个不超过$6^\circ$的相角。
+于是选定 $\angle G(j\omega_c) = 129^\circ$。在图\ref{fig:back1}中寻找此点，为$\omega_c = 1.619$
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/back1.png}
+    \caption{原系统的相频曲线}
+    \label{fig:back1}
+\end{figure}
+
+接着确定需要降低的幅值，也就是$20\lg b$，就是图\ref{fig:back2}中对应于$\omega_c$的幅值的相反数。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/back2.png}
+    \caption{原系统的幅频曲线}
+    \label{fig:back2}
+\end{figure}
+于是
+\[
+20\lg b = -19.648 \Rightarrow  b = 0.1041
+\]
+
+于是，容易得到两个转折频率$\omega_E$、$\omega_F$：
+\[
+\begin{split}
+    \omega_F &= 0.1 \omega_c\\
+    \omega_E &= b\omega_F
+\end{split}
+\]
+
+得到$\omega_E = 0.0207036$、$\omega_F = 0.2277$。
+迟后校正系统为：
+\[
+    G_c(s) = \frac{\frac{s}{0.2277}+1}{\frac{s}{0.0207036}+1}
+\]
+系统伯德图如图\ref{fig:back}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/back.png}
+    \caption{校正装置伯德图}
+    \label{fig:back}
+\end{figure}
+
+校正后系统的伯德图如图\ref{fig:back_sys}，阶跃响应如图\ref{fig:back_time}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/back_sys.png}
+    \caption{校正后系统伯德图}
+    \label{fig:back_sys}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/back_time.png}
+    \caption{校正后系统阶跃响应}
+    \label{fig:back_time}
+\end{figure}
+校正后系统的相角裕度是$45.56^\circ$，幅值裕度不变，满足设计要求。但是从时域响应图\ref{fig:back_time}中
+可以看出，由于截止频率的减小，系统响应速度变慢，系统调节时间并没有因为震荡被遏制而得到缩减。
+
+
+\subsection{三种校正方式对比分析}
+针对同一被控对象，分别设计了超前校正、滞后校正及滞后-超前校正装置。三种校正策略在改善系统性能时的侧重点各不相同，具体表现在频域指标和时域响应上的差异。三种校正方式校正后系统频域特性如图\ref{fig:bode}，时域响应如图\ref{fig:time}。
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/bode.png}
+    \caption{伯德图对比}
+    \label{fig:bode}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques2_2/time.png}
+    \caption{阶跃响应对比}
+    \label{fig:time}
+\end{figure}
+
+
+
+
+从设计原理上看，\textbf{超前校正}利用校正网络在中频段的相位超前特性，有效提高了系统的相角裕度，从而显著减小了阶跃响应的超调量，并加快了系统的响应速度（增大剪切频率 $\omega_c$）。然而，该方法会抬升高频段的增益，可能降低系统对高频噪声的抗干扰能力。
+
+\textbf{滞后校正}则侧重于改善系统的稳态精度。通过将校正网络的极点配置在低频段，大幅提高了系统的开环直流增益，从而降低了稳态误差；同时，它将剪切频率向左移动，牺牲了一定的响应速度以换取足够的相角储备，保证了系统的稳定性。
+
+\textbf{滞后-超前校正}则兼顾稳态精度和动态性能。该方案结合了前两者的优势：滞后部分用于提高低频增益以改善稳态性能，超前部分用于补偿中频相位以提升动态响应品质。虽然其物理实现相对复杂，但在面对单一校正无法满足全部性能指标时，具有最佳的调节灵活性。
+
+综上所述，三种校正方式的性能特点对比如表~\ref{tab:correction_comparison}所示。
+
+\begin{table}[htbp]
+    \centering
+    \caption{三种校正方式性能对比}
+    \label{tab:correction_comparison}
+    \begin{tabular}{lccc}
+        \toprule
+        \textbf{性能指标} & \textbf{超前校正} & \textbf{滞后校正} & \textbf{滞后-超前校正} \\
+        \midrule
+        超调量 $\sigma\%$ & 减小 & 略有减小 & 减小 \\
+        调节时间 $t_s$ & 缩短 & 延长 & 适中 \\
+        剪切频率 $\omega_c$ & 增大（响应快） & 减小（响应慢） & 适中 \\
+        抗高频噪声 & 较差 & 较好 & 一般 \\
+        实现复杂度 & 简单 & 简单 & 较复杂 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+就实际而言，由于超前校正对高频增益不大，采用超前校正，不仅实现简单，而且明显减少超调量和调节时间，
+迟后-超前校正表现适中，校正装置更加灵活可调，但是实现较为复杂。迟后系统只是勉强达到基本设计要求
+对超调的抑制明显不如前两者，而且调节时间相比前两者更长，不适宜应用在此系统中。故，如果对高频噪声
+不敏感，应当使用超前校正；如果不考虑实现成本，可以使用迟后-超前校正。
+
+
+
+% \begin{figure}[htbp]
+%     \centering
+%     % 假设图片文件名为 comparison.png
+%     \includegraphics[width=0.8\textwidth]{comparison.png}
+%     \caption{三种校正后的系统阶跃响应对比}
+%     \label{fig:step_response_comparison}
+% \end{figure}
+
+\end{document}
+

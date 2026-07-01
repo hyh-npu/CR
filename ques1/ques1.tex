@@ -1,0 +1,203 @@
+% !TeX root = ../report.tex
+\documentclass[../report.tex]{subfiles}
+\begin{document}
+
+\section{原系统根轨迹}
+对于原系统的开环传递函数：
+\begin{equation}
+    G(s)H(s) = \frac{K(s+20)}{s(s^2 + 24s + 104)}
+\end{equation}
+
+本节第一部分绘制根轨迹图并计算相关关键点（渐近线，分离/汇合点，出射/入射角，和虚轴交点），第二部分分析系统稳定性，
+第三部分分析阻尼比 $\xi$ 和自然频率 $\omega_n$ 在根轨迹上的几何意义，第四部分根据超调量选择合适的增益 $K$ 。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{根轨迹的绘制}
+
+\subsubsection{根轨迹的绘制：}
+利用 MATLAB 可以较为方便地绘制根轨迹图，代码如下：
+
+\begin{lstlisting}[language=Matlab]
+    s= tf('s');
+    gs = (s+20)/(s*(s*s + 24*s +104));
+    r = rlocus(gs);
+\end{lstlisting}
+
+得到的根轨迹图像如图\ref{fig:ques1_rlocus}所示。
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques1/rlocus.png}
+    \caption{根轨迹图}
+    \label{fig:ques1_rlocus}
+\end{figure}
+可以看到，本系统有3个开环极点，1个开环零点。根轨迹从3个开环极点出发，最终汇聚到1个开环零点和2个无穷远处的渐近线上。
+
+\subsubsection{渐近线的绘制：}
+根轨迹的渐近线倾斜角公式为：
+\begin{equation}
+    \theta_a = \frac{(2k+1)\pi}{n-m}, k=0,1,2,\cdots
+\end{equation}
+其中，$n$ 为系统开环传递函数的极点个数，$m$ 为系统开环传递函数的零点个数。对于本系统，$n=3, m=1$，因此渐近线的角度为：
+\begin{equation}
+    \theta_a = \frac{(2k+1)\pi}{3-1} = \frac{(2k+1)\pi}{2}, k=0,1,2,\cdots
+\end{equation}
+根轨迹的渐近线与实轴交点公式为：
+\begin{equation}
+    \sigma_a = \frac{\sum_{i=1}^{n}p_i - \sum_{j=1}^{m}z_j}{n-m}
+\end{equation}
+经过计算可以得到，$\sigma_a = -2$，因此渐近线与实轴交点为 $-2$。
+
+\subsubsection{分离/汇合点的绘制：}
+根轨迹分离/汇合点公式为：
+\begin{equation}
+    \sum_{i=1}^{n}\frac{1}{s - p_i} - \sum_{j=1}^{m}\frac{1}{s - z_j} = 0
+\end{equation}
+经过计算可以得到，分离/汇合点为 $s = -2.81, K = 7,27$。
+
+\subsubsection{出射/入射角的求解：}
+出射/入射角可以使用以下公式计算：
+\begin{align}
+    \theta &= 180^\circ + \angle(s - z_1) + \angle(s - z_2) + \cdots + \angle(s - z_m) - \angle(s - p_1) - \angle(s - p_2) - \cdots - \angle(s - p_n)
+\\
+    \varphi &= 180^\circ + \angle(s - p_1) + \angle(s - p_2) + \cdots + \angle(s - p_n) - \angle(s - z_1) - \angle(s - z_2) - \cdots - \angle(s - z_m)
+\end{align}
+然而，由于本系统的开环零极点均分布在实轴上，因此出射/入射角均为 $0^\circ$或$180^\circ$， 可以直接由图得到，并不需要使用此公式。
+
+\subsubsection{和虚轴交点的计算：}
+和虚轴交点可以利用特征方程 $D(s) = 0$ 来求解。以本系统为例，对$1+G(s)H(s)$进行化简，得到特征方程为：
+\begin{equation}
+    D(s) = s^3 + 24s^2 + (104+K)s + 20K = 0
+\end{equation}
+假定有根分布在虚轴上，也就是 $s = j\omega$，代入特征方程得到：
+\begin{equation}
+    (j\omega)^3 + 24(j\omega)^2 + (104+K)(j\omega) + 20K = 0
+\end{equation}
+将其分为实部和虚部，得到：
+\begin{equation}
+    \begin{cases}
+        20K - 24\omega^2 = 0 \\
+        -\omega^3 + (104+K)\omega = 0
+    \end{cases}
+\end{equation}
+求解得到：$\omega = 0, K = 0$ 或 $\omega = j23.37, K = -624.5$（$K<0, \omega \notin \mathbb{R} $， 舍去），
+因此本系统除原点外没有和虚轴交点。
+
+综上，本部分得到结论：
+\begin{itemize}
+    \item 渐近线与实轴交点为 $-2$，渐近线角度为 $90^\circ, 270^\circ$；
+    \item 分离/汇合点为 $s = -2.81, K = 7.27$，（见图\ref{fig:ques1_rlocus_ori}）；
+    \item 出射/入射角均为 $0^\circ$ 或 $180^\circ$；
+    \item 除原点外没有和虚轴交点。
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques1/rlocus_ori.png}
+    \caption{根轨迹图}
+    \label{fig:ques1_rlocus_ori}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{系统稳定性分析}
+根轨迹的稳定性分析可以通过观察根轨迹图来进行。稳定性判据为：当系统的闭环极点全部位于左半平面时，系统是稳定的；
+当系统的闭环极点有一个或多个位于右半平面时，系统是不稳定的；当系统的闭环极点有一个或多个位于虚轴上时，系统是临界稳定的。
+
+对于本系统，根轨迹从三个开环极点出发，其中两个极点位于左半平面，一个极点位于原点。随着增益 $K$ 
+的增加，根轨迹会向右移动，并最终汇聚到开环零点和无穷远处的渐近线上。
+
+因而可以得到结论：
+\begin{itemize}
+    \item 当 $K=0$ 时，系统的闭环极点为 $s = 0, -12 \pm j8$，其中一个极点位于原点，系统是临界稳定的；
+    \item 当 $0 < K \leq  7.27$ 时，系统的闭环极点全部位于左半实轴上，系统是稳定的，并且单调收敛；
+    \item 当 $K > 7.27$ 时，系统闭环极点全部位于左半平面上，系统是稳定的，并且由一对共轭极点，系统震荡收敛。
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{阻尼比 $\xi$ 和自然频率 $\omega_n$ 的几何意义}\label{sec:wxi}
+
+对于一对共轭极点 $s = \sigma \pm j\omega_d$，其阻尼比 $\xi$ 和自然频率 $\omega_n$ 的几何意义如下：
+\begin{itemize}
+    \item 阻尼比 $\xi$：表示系统的阻尼程度，定义为 $\xi = -\frac{\sigma}{\sqrt{\sigma^2 + \omega_d^2}}$。
+    在根轨迹图中，阻尼比 $\xi$ 可以通过极点到虚轴的距离与极点到原点的距离之比来表示。具体来说，阻尼比 $\xi$ 越大，
+    极点越靠近实轴，系统的响应越快且振荡越小；反之，阻尼比 $\xi$ 越小，极点越靠近虚轴，系统的响应越慢且振荡越大。
+    \item 自然频率 $\omega_n$：表示系统的固有振荡频率，定义为 $\omega_n = \sqrt{\sigma^2 + \omega_d^2}$。
+    在根轨迹图中，自然频率 $\omega_n$ 可以通过极点到原点的距离来表示。具体来说，自然频率 $\omega_n$ 越大，
+    系统的响应速度越快；反之，自然频率 $\omega_n$ 越小，系统的响应速度越慢。
+\end{itemize}
+
+下面不妨用二阶系统来举例说明，假设系统的闭环传递函数为：
+\begin{equation}
+    T(s) = \frac{\omega_n^2}{s^2 + 2\xi\omega_n s + \omega_n^2}
+\end{equation}
+
+首先固定 $\omega_n$，改变 $\xi$ 的值，观察系统的闭环极点在根轨迹图上的位置变化。可以发现，当 $\xi$ 增大时，闭环极点会向实轴靠近，系统的响应速度加快，振荡减小；当 $\xi$ 减小时，闭环极点会向虚轴靠近，系统的响应速度减慢，振荡增大。
+然后固定 $\xi$，改变 $\omega_n$ 的值，观察系统的闭环极点在根轨迹图上的位置变化。可以发现，当 $\omega_n$ 增大时，闭环极点远离原点，系统的响应速度加快；当 $\omega_n$ 减小时，闭环极点会靠近原点，系统的响应速度减慢。
+具体结果如图\ref{fig:ques1_xi_wn}所示。
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{./ques1/exp.png}
+    \caption{二阶系统中的阻尼比 $\xi$ 和自然频率 $\omega_n$ }
+    \label{fig:ques1_xi_wn}
+\end{figure}
+
+高阶系统的闭环极点可能有多个共轭极点对，可能需要考虑每一对共轭极点的阻尼比和自然频率。当
+系统多对共轭极点距离虚轴距离差别较大时，可以只考虑系统主极点，从而将高阶系统近似为二阶系统。故而，
+阻尼比 $\xi$ 和自然频率 $\omega_n$ 的几何意义在高阶系统中仍然适用。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{根据超调量选择合适的增益 $K$}
+由图\ref{fig:ques1_rlocus_ori}可以看到，系统由三个极点，但是最左侧极点距离虚轴较远，因此可以仅考虑右侧两极点，
+将系统近似为二阶系统。当$K \leq 7.27$时，系统保持稳定而且单调收敛，故而系统零超调。当$K > 7.27$时，系统近似
+为欠阻尼二阶系统如下：
+\begin{equation}
+    T(s) = \frac{\omega_n^2}{s^2 + 2\xi\omega_n s + \omega_n^2}
+\end{equation}
+其闭环传递函数是：
+\begin{equation}
+    T(s) = \frac{\omega_n^2}{s^2 + 2\xi\omega_n s + \omega_n^2}
+\end{equation}
+输入阶跃响应后，系统的响应是：
+\begin{equation}
+    c(t) = 1 - \frac{1}{\sqrt{1-\xi^2}}e^{-\xi\omega_n t}\sin(\omega_d t + \phi)
+\end{equation}
+其中，$\omega_d = \omega_n\sqrt{1-\xi^2}$， $\phi = \arccos(\xi)$。
+
+对$c(t)$求导，得到：
+\begin{equation}
+    \frac{dc(t)}{dt} = \frac{1}{\sqrt{1-\xi^2}}e^{-\xi\omega_n t}(\xi\omega_n\sin(\omega_d t + \phi) - \omega_d\cos(\omega_d t + \phi)) 
+\end{equation}
+令 $\frac{dc(t)}{dt} = 0$，得到：
+\begin{equation}
+    \xi\omega_n\sin(\omega_d t + \phi) - \omega_d\cos(\omega_d t + \phi) = 0
+\end{equation}
+从而有$c(t)$的极值点为：
+\begin{equation}
+    t_p = \frac{\pi}{\omega_d} = \frac{\pi}{\omega_n\sqrt{1-\xi^2}}
+\end{equation}
+将$t_p$代入$c(t)$，得到系统的最大超调量为：
+\begin{align}
+    M_p = c(t_p) - 1 = e^{-\frac{\pi\xi}{\sqrt{1-\xi^2}}}
+\end{align}
+令 $M_p = 0.1$，得到 $\xi = 0.5912$。
+结合图像\ref{fig:ques1_rlocus_K}，可以得到 $\xi = 0.5912$ 对应的增益 $K = 20.3$，在时域上验证，符合预期（见图\ref{fig:ques1_time_K}）。
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./ques1/rlocus10.png}
+        \caption{根轨迹图}
+        \label{fig:ques1_rlocus_K}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{./ques1/time10.png}
+        \caption{时域响应图}
+        \label{fig:ques1_time_K}
+    \end{subfigure}
+    \caption{增益 $K$ 对系统超调量的影响}
+\end{figure}
+
+故而，当系统的超调量要求为 $10\%$ 时，选择增益 $0< K < 20.3$ 可以满足要求。
+
+
+\end{document}
